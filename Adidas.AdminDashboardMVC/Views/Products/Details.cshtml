@@ -1,0 +1,329 @@
+﻿@model Adidas.DTOs.Main.Product_DTOs.ProductDto
+@using Microsoft.AspNetCore.Http
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+
+<div class="container ">
+    <!-- Breadcrumb and Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Products" asp-action="Index" class="text-decoration-none">
+                        <i class="fas fa-arrow-left me-2"></i>Products
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">@Model.Name</li>
+            </ol>
+        </nav>
+        <div class="btn-group">
+            <a asp-controller="Products" asp-action="Edit" asp-route-id="@Model.Id"
+               class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-edit me-1"></i>Edit Product
+            </a>
+            <a asp-controller="ProductVariants" asp-action="Create" asp-route-productId="@Model.Id"
+               class="btn btn-success btn-sm">
+                <i class="fas fa-plus me-1"></i>Add Variant
+            </a>
+        </div>
+    </div>
+
+    <!-- Product Information Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h1 class="h3 mb-0">@Model.Name</h1>
+            <span class="badge bg-secondary">@Model.CategoryName</span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="text-muted mb-3">@Model.Description</p>
+
+                    <!-- Rating -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= Math.Floor(Model.AverageRating))
+                                {
+                                    <i class="fas fa-star text-warning"></i>
+                                }
+                                else if (i - 0.5 <= Model.AverageRating)
+                                {
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="far fa-star text-warning"></i>
+                                }
+                            }
+                        </div>
+                        <span class="text-muted">
+                            @Model.AverageRating.ToString("0.0") (@Model.ReviewCount reviews)
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Price -->
+                    <div class="text-end">
+                        <div class="h4 text-primary mb-1">@Model.DisplayPrice.ToString("C")</div>
+                        @if (Model.IsOnSale)
+                        {
+                            <div class="text-muted">
+                                <del>@Model.Price.ToString("C")</del>
+                                <span class="badge bg-danger ms-2">ON SALE</span>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="row text-center mt-3">
+                        <div class="col">
+                            <div class="h5 mb-0 text-primary">@Model.Variants.Count()</div>
+                            <small class="text-muted">Variants</small>
+                        </div>
+                        <div class="col">
+                            <div class="h5 mb-0 text-success">@Model.Variants.Sum(v => v.StockQuantity)</div>
+                            <small class="text-muted">Total Stock</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Variants Section -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">
+                    <i class="fas fa-layer-group me-2"></i>Product Variants
+                </h5>
+                <small class="text-muted">Manage  inventory</small>
+            </div>
+            <span class="badge bg-primary fs-6">@Model.Variants.Count() Variants</span>
+        </div>
+
+        @if (!Model.Variants.Any())
+        {
+            <!-- Empty State -->
+            <div class="card-body text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-box-open fa-3x text-muted"></i>
+                </div>
+                <h5 class="text-muted">No Variants Created Yet</h5>
+                <p class="text-muted mb-4">Start by creating your first product variant with different colors, sizes, or configurations</p>
+                <a asp-controller="ProductVariants" asp-action="Create" asp-route-productId="@Model.Id"
+                   class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create First Variant
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Variants Table -->
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Image</th>
+                            @*   <th>Size</th>
+                            <th>Color</th> *@
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th width="120">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var variant in Model.Variants)
+                        {
+                            var finalPrice = Model.DisplayPrice + variant.PriceAdjustment;
+                            <tr>
+                                <td>
+                                    <img src="@variant.ImageUrl" alt="Alternate Text" class="img-thumbnail" style="width:50px; height:50px; object-fit:cover;" />
+                                </td>
+                                @*     <td>
+                                    <span class="badge bg-primary">@variant.Size</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="color-dot me-2"
+                                             style="width: 20px; height: 20px; background-color: @variant.Color; border-radius: 50%; border: 2px solid #dee2e6;"
+                                             title="@variant.Color"></div>
+                                        <span>@variant.Color</span>
+                                    </div>
+                                </td> *@
+                                <td>
+                                    <div class="fw-bold text-primary">@finalPrice.ToString("C")</div>
+                                    @if (variant.PriceAdjustment != 0)
+                                    {
+                                        <small class="text-muted">
+                                            (@(variant.PriceAdjustment > 0 ? "+" : "")@variant.PriceAdjustment.ToString("C"))
+                                        </small>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2">@variant.StockQuantity</span>
+                                        <div class="progress" style="width: 60px; height: 8px;">
+                                            @{
+                                                var stockPercentage = Math.Min(100, (variant.StockQuantity / 50.0) * 100);
+                                                var progressClass = variant.StockQuantity > 10 ? "bg-success" :
+                                                variant.StockQuantity > 0 ? "bg-warning" : "bg-danger";
+                                            }
+                                            <div class="progress-bar @progressClass"
+                                                 role="progressbar"
+                                                 style="width: @stockPercentage%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (variant.StockQuantity > 10)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>In Stock
+                                        </span>
+                                    }
+                                    else if (variant.StockQuantity > 0)
+                                    {
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Low Stock
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times-circle me-1"></i>Out of Stock
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-controller="ProductVariants"
+                                           asp-action="Edit"
+                                           asp-route-id="@variant.Id"
+                                           class="btn btn-outline-primary btn-sm"
+                                           title="Edit Variant">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-outline-danger btn-sm"
+                                                onclick="confirmDelete('@variant.Id', '@Model.Id', '@variant.Sku', '@variant.Color', '@variant.Size')"
+                                                title="Delete Variant">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .color-dot {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex-shrink: 0;
+    }
+
+    .progress {
+        background-color: #e9ecef;
+    }
+
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .table th {
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .card {
+        border: 1px solid #e3e6f0;
+    }
+
+    .card-header {
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    code {
+        font-family: 'Courier New', monospace;
+        font-size: 0.85em;
+    }
+</style>
+
+<script>
+    // SweetAlert Delete Confirmation
+    function confirmDelete(variantId, productId, sku, color, size) {
+        Swal.fire({
+            title: 'Delete Variant?',
+            html: `
+                <div class="text-start bg-light p-3 rounded mb-3">
+                    <div class="mb-2">
+                        <strong>SKU:</strong>
+                        <code class="bg-secondary text-white px-2 py-1 rounded">${sku}</code>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Color:</strong>
+                        <span style="display: inline-block; width: 16px; height: 16px; background: ${color}; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); vertical-align: middle; margin-right: 8px;"></span>
+                        ${color}
+                    </div>
+                    <div>
+                        <strong>Size:</strong>
+                        <span class="badge bg-primary">${size}</span>
+                    </div>
+                </div>
+                <p class="text-danger fw-bold mb-0">This action cannot be undone!</p>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-trash-alt me-1"></i> Delete',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Create and submit form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/ProductVariants/Delete/${variantId}`;
+
+                // Add CSRF token if available
+                const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (token) {
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = token.value;
+                    form.appendChild(tokenInput);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+</script>

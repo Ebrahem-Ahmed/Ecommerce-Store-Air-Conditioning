@@ -1,0 +1,57 @@
+﻿using Adidas.Application.Contracts.ServicesContracts.Separator;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Adidas.ClientAPI.Controllers.Product
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoriesController : ControllerBase
+    {
+        private readonly ICategoryService _categoryService;
+
+        public CategoriesController(ICategoryService categoryService)
+        {
+            _categoryService = categoryService;
+        }
+
+        [HttpGet("GetAllSubCategories")]
+        public async Task<IActionResult> GetAllSubCategories()
+        {
+            var categories = await _categoryService.GetFilteredCategoriesAsync("Sub", "Active", "");
+            return Ok(categories);
+
+        }
+
+        [HttpGet("GetMainCategoriesByType/{Type}")]
+        public async Task<IActionResult> GetMainCategoriesByType(string Type)
+        {
+            var categories = await _categoryService.GetMainCategoriesByType(Type);
+            return Ok(categories);
+
+        }
+
+        [HttpGet("GetAllMainCategories")]
+        public async Task<IActionResult> GetAllMainCategories()
+        {
+            var categories = await _categoryService.GetFilteredCategoriesAsync("Main", "Active", "");
+            return Ok(categories);
+
+        }
+        [HttpGet("GetSubCategoriesByCategoryId/{id}")]
+        public async Task<IActionResult> GetSubCategoriesByCategoryId(Guid id)
+        {
+            var subCategories = await _categoryService.GetSubCategoriesByCategoryId(id);
+            return Ok(subCategories);
+
+        }
+
+        [HttpGet("GetSubCategoriesByCategorySlug/{slug}")]
+        public async Task<IActionResult> GetSubCategoriesByCategorySlug(string slug)
+        {
+            var subCategories = await _categoryService.GetSubCategoriesByCategorySlug(slug);
+            return Ok(subCategories);
+
+        }
+    }
+}
+ 

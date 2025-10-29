@@ -1,0 +1,761 @@
+﻿@model Adidas.DTOs.Main.Product_Variant_DTOs.ProductVariantUpdateDto
+@{
+    ViewData["Title"] = "Edit Product Variant";
+}
+
+<!-- Enhanced CSS -->
+<style>
+    .edit-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .edit-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .edit-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb-nav {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
+        margin-top: 1rem;
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+        .breadcrumb-nav a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .breadcrumb-nav a:hover {
+                color: white;
+            }
+
+    .wizard-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #667eea;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-icon {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .form-control-enhanced {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+        .form-control-enhanced:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.15rem rgba(102, 126, 234, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .form-control-enhanced[readonly] {
+            background: #f8f9fa;
+            border-color: #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+    .current-image-container {
+        background: white;
+        border: 2px dashed #e9ecef;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+        .current-image-container:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+    .current-image {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        margin: 5px;
+    }
+
+        .current-image:hover {
+            transform: scale(1.05);
+        }
+
+    .no-image-placeholder {
+        color: #6c757d;
+        font-size: 1.1rem;
+        padding: 2rem;
+    }
+
+    .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+
+    .file-upload-area {
+        border: 2px dashed #e9ecef;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        background: white;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .file-upload-area.drag-over {
+            border-color: #28a745;
+            background: #d1edff;
+        }
+
+    .upload-icon {
+        font-size: 2rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+
+    .upload-text {
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .upload-subtext {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .stock-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .stock-high {
+        background: #d1edff;
+        color: #0c5aa0;
+    }
+
+    .stock-medium {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .stock-low {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .stock-out {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+
+    .price-preview {
+        background: #e7f3ff;
+        border: 1px solid #b8daff;
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        color: #004085;
+        font-weight: 500;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+        .btn-edit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+    .btn-loading {
+        position: relative;
+        color: transparent !important;
+    }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+     button-loading-spinner {
+        from
+
+    {
+        transform: translate(-50%, -50%) rotate(0turn);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(1turn);
+    }
+
+    }
+
+    .progress-bar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+    }
+
+    .position-relative {
+        position: relative;
+    }
+
+    .form-check-input:checked {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .form-check-label {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .badge {
+        font-size: 0.7em;
+    }
+
+    /* Dim images that are marked for deletion */
+    .image-container.marked-for-deletion {
+        opacity: 0.5;
+        filter: grayscale(50%);
+    }
+
+        .image-container.marked-for-deletion .current-image {
+            border: 2px solid #dc3545;
+        }
+
+    .color-preview {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid #dee2e6;
+        margin-left: 10px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+     (max-width: 768px) {
+        .edit-title
+
+    {
+        font-size: 2rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .form-section {
+        padding: 1rem;
+    }
+
+    .card-footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-edit {
+        width: 100%;
+        justify-content: center;
+    }
+
+    }
+</style>
+
+<div class="edit-header">
+    <div class="container">
+        <h1 class="edit-title">
+            <i class="fas fa-edit"></i>
+            @ViewData["Title"]
+        </h1>
+        <p class="edit-subtitle">Update product variant details and specifications</p>
+        <nav class="breadcrumb-nav">
+            <a href="/" class="text-decoration-none"><i class="fas fa-home"></i> Home</a>
+            <span>/</span>
+            <a asp-action="Index" class="text-decoration-none"><i class="fas fa-box"></i> Product Variants</a>
+            <span>/</span>
+            <span>Edit Variant</span>
+        </nav>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card wizard-card">
+                <div class="card-body p-4">
+                    <!-- START FORM -->
+                    <form asp-action="Edit" asp-controller="ProductVariants" method="post" enctype="multipart/form-data" id="editVariantForm">
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Product Information (hidden) -->
+                        <div class="form-section" style="display:none;">
+                            <label asp-for="ProductId" class="form-label fw-bold">Product ID</label>
+                            <input asp-for="ProductId" class="form-control form-control-enhanced" readonly />
+                        </div>
+
+                        <!-- Variant Details -->
+                        <div class="form-section">
+                            <h4 class="section-title"><i class="fas fa-palette"></i> Variant Details</h4>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ColorHex" class="form-label">Choose Color *</label>
+                                    <div class="d-flex align-items-center">
+                                        <input asp-for="ColorHex" type="color" class="form-control form-control-color" value="@Model.ColorHex" id="colorHexInput" />
+                                        <div id="colorPreview" class="color-preview" style="background-color: @Model.ColorHex;"></div>
+                                    </div>
+                                    <input type="hidden" asp-for="Color" id="ColorInput" />
+                                    <span asp-validation-for="ColorHex" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Size" class="form-label fw-bold">Size *</label>
+                                    <select asp-for="Size" class="form-select form-control-enhanced">
+                                        <option value="">-- Select Size --</option>
+                                        <option value="XS">XS</option>
+                                        <option value="S">S</option>
+                                        <option value="M">M</option>
+                                        <option value="L">L</option>
+                                        <option value="XL">XL</option>
+                                        <option value="XXL">XXL</option>
+                                    </select>
+                                    <span asp-validation-for="Size" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inventory & Pricing -->
+                        <div class="form-section">
+                            <h4 class="section-title"><i class="fas fa-chart-line"></i> Inventory & Pricing</h4>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="StockQuantity" class="form-label fw-bold">Stock Quantity *</label>
+                                    <input asp-for="StockQuantity" class="form-control form-control-enhanced" type="number" min="0" id="stockInput" />
+                                    <div id="stockIndicator" class="stock-indicator" style="display:none;"></div>
+                                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PriceAdjustment" class="form-label fw-bold">Price Adjustment</label>
+                                    <input asp-for="PriceAdjustment" class="form-control form-control-enhanced" type="number" step="0.01" id="priceInput" />
+                                    <div id="pricePreview" class="price-preview" style="display:none;"></div>
+                                    <span asp-validation-for="PriceAdjustment" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Management -->
+                        <div class="form-section">
+                            <h4 class="section-title"><i class="fas fa-camera"></i> Image Management</h4>
+
+                            <!-- Existing Images -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Current Images</label>
+                                <div class="current-image-container">
+                                    @if (Model.ExistingImages != null && Model.ExistingImages.Any())
+                                    {
+                                        <div class="image-preview-container">
+                                            @foreach (var img in Model.ExistingImages)
+                                            {
+                                                <div class="text-center position-relative image-container" data-image-id="@img.Id">
+                                                    <img src="@img.ImageUrl" alt="Existing image" class="current-image" />
+                                                    @if (img.IsPrimary)
+                                                    {
+                                                        <span class="badge bg-primary position-absolute top-0 start-0 m-1">Primary</span>
+                                                    }
+                                                    <div class="mt-2">
+                                                        <label class="form-check-label">
+                                                            <input type="checkbox" name="DeleteImages" value="@img.Id" class="form-check-input me-1 delete-checkbox" />
+                                                            <small class="text-danger fw-bold">Delete this image</small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="no-image-placeholder">
+                                            <i class="fas fa-image fa-3x mb-3" style="color:#dee2e6;"></i>
+                                            <p>No images available</p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Upload new images -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Upload New Images</label>
+                                <div class="file-upload-area" id="fileUploadArea">
+                                    <input asp-for="Images"
+                                           type="file"
+                                           multiple
+                                           accept="image/*"
+                                           class="form-control"
+                                           id="imageFileInput"
+                                           style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;" />
+                                    <div id="uploadAreaContent">
+                                        <i class="upload-icon fas fa-cloud-upload-alt"></i>
+                                        <div class="upload-text">Click to browse or drag & drop</div>
+                                        <div class="upload-subtext">Supports JPG, PNG, GIF, WebP, BMP, TIFF, SVG • Max 5MB each</div>
+                                    </div>
+                                </div>
+
+                                <div id="imagePreview" class="image-preview-container" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-footer text-center">
+                    <button type="submit" form="editVariantForm" class="btn-edit me-2" id="saveButton">
+                        <i class="fas fa-save me-2"></i> Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('imageFileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadAreaContent = document.getElementById('uploadAreaContent');
+        const colorHexInput = document.getElementById('colorHexInput');
+        const colorInput = document.getElementById('ColorInput');
+        const colorPreview = document.getElementById('colorPreview');
+        const form = document.getElementById('editVariantForm');
+        const saveButton = document.getElementById('saveButton');
+        const stockInput = document.getElementById('stockInput');
+        const stockIndicator = document.getElementById('stockIndicator');
+        const priceInput = document.getElementById('priceInput');
+        const pricePreview = document.getElementById('pricePreview');
+
+        // Color picker functionality
+        if (colorHexInput && colorInput && colorPreview) {
+            colorHexInput.addEventListener('change', function() {
+                const hexColor = this.value;
+                colorPreview.style.backgroundColor = hexColor;
+                // Simple color name mapping - you can expand this
+                colorInput.value = getColorName(hexColor);
+            });
+
+            // Initialize color preview
+            if (colorHexInput.value) {
+                colorPreview.style.backgroundColor = colorHexInput.value;
+                colorInput.value = getColorName(colorHexInput.value);
+            }
+        }
+
+        // Stock quantity indicator
+        if (stockInput && stockIndicator) {
+            stockInput.addEventListener('input', function() {
+                const quantity = parseInt(this.value) || 0;
+                updateStockIndicator(quantity);
+            });
+
+            // Initialize stock indicator
+            if (stockInput.value) {
+                updateStockIndicator(parseInt(stockInput.value));
+            }
+        }
+
+        // Price adjustment preview
+        if (priceInput && pricePreview) {
+            priceInput.addEventListener('input', function() {
+                const adjustment = parseFloat(this.value) || 0;
+                if (adjustment !== 0) {
+                    pricePreview.style.display = 'block';
+                    pricePreview.textContent = adjustment > 0
+                        ? `Price increased by $${adjustment.toFixed(2)}`
+                        : `Price reduced by $${Math.abs(adjustment).toFixed(2)}`;
+                } else {
+                    pricePreview.style.display = 'none';
+                }
+            });
+
+            // Initialize price preview
+            if (priceInput.value && parseFloat(priceInput.value) !== 0) {
+                const adjustment = parseFloat(priceInput.value);
+                pricePreview.style.display = 'block';
+                pricePreview.textContent = adjustment > 0
+                    ? `Price increased by $${adjustment.toFixed(2)}`
+                    : `Price reduced by $${Math.abs(adjustment).toFixed(2)}`;
+            }
+        }
+
+        // Delete checkbox functionality
+        const deleteCheckboxes = document.querySelectorAll('.delete-checkbox');
+        deleteCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const imageContainer = this.closest('.image-container');
+                if (this.checked) {
+                    const confirmed = confirm('Are you sure you want to delete this image?');
+                    if (confirmed) {
+                        imageContainer.classList.add('marked-for-deletion');
+                    } else {
+                        this.checked = false;
+                    }
+                } else {
+                    imageContainer.classList.remove('marked-for-deletion');
+                }
+            });
+        });
+
+        // File upload handling
+        if (fileInput) {
+            fileInput.addEventListener('change', function (e) {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFileSelect(e.target.files);
+                } else {
+                    imagePreview.innerHTML = "";
+                    imagePreview.style.display = 'none';
+                    resetUploadAreaText();
+                }
+            });
+        }
+
+        // Form submission validation
+        if (form && saveButton) {
+            form.addEventListener('submit', function(e) {
+                const existingImages = document.querySelectorAll('input[name="DeleteImages"]');
+                const checkedForDeletion = document.querySelectorAll('input[name="DeleteImages"]:checked');
+                const newImageFiles = fileInput.files;
+
+                // Check if all existing images are marked for deletion and no new images are selected
+                if (existingImages.length > 0 &&
+                    checkedForDeletion.length === existingImages.length &&
+                    (!newImageFiles || newImageFiles.length === 0)) {
+
+                    e.preventDefault();
+                    alert('You cannot delete all images without uploading new ones. At least one image is required.');
+                    return false;
+                }
+
+                // Show loading state
+                saveButton.classList.add('btn-loading');
+                saveButton.disabled = true;
+                saveButton.textContent = 'Saving...';
+            });
+        }
+
+        // Drag and drop functionality
+        if (fileInput) {
+            const uploadArea = document.getElementById('fileUploadArea');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+        }
+
+        // Helper functions
+        function handleFileSelect(files) {
+            imagePreview.innerHTML = "";
+            let validFiles = 0;
+
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    alert(`File ${file.name} is not an image.`);
+                    return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large (max 5MB).`);
+                    return;
+                }
+
+                validFiles++;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("current-image");
+                    img.style.margin = "5px";
+                    imagePreview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            if (validFiles > 0) {
+                imagePreview.style.display = 'flex';
+                uploadAreaContent.innerHTML = `<i class="upload-icon fas fa-check-circle" style="color:#28a745;"></i><div class="upload-text">${validFiles} file(s) selected</div>`;
+            } else {
+                resetUploadAreaText();
+            }
+        }
+
+        function resetUploadAreaText() {
+            uploadAreaContent.innerHTML = `
+                <i class="upload-icon fas fa-cloud-upload-alt"></i>
+                <div class="upload-text">Click to browse or drag & drop</div>
+                <div class="upload-subtext">Supports JPG, PNG, GIF, WebP, BMP, TIFF, SVG • Max 5MB each</div>`;
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            document.getElementById('fileUploadArea').classList.add('drag-over');
+        }
+
+        function unhighlight(e) {
+            document.getElementById('fileUploadArea').classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            handleFileSelect(files);
+        }
+
+        function getColorName(hexColor) {
+            // Basic color name mapping - expand as needed
+            const colorMap = {
+                '#ff0000': 'Red', '#ff0080': 'Rose', '#ff00ff': 'Magenta',
+                '#8000ff': 'Purple', '#0000ff': 'Blue', '#0080ff': 'Azure',
+                '#00ffff': 'Cyan', '#00ff80': 'Spring Green', '#00ff00': 'Lime',
+                '#80ff00': 'Chartreuse', '#ffff00': 'Yellow', '#ff8000': 'Orange',
+                '#000000': 'Black', '#ffffff': 'White', '#808080': 'Gray',
+                '#800000': 'Maroon', '#008000': 'Green', '#000080': 'Navy'
+            };
+
+            return colorMap[hexColor.toLowerCase()] || hexColor;
+        }
+
+        function updateStockIndicator(quantity) {
+            if (quantity === 0) {
+                stockIndicator.className = 'stock-indicator stock-out';
+                stockIndicator.innerHTML = '<i class="fas fa-times-circle"></i> Out of Stock';
+                stockIndicator.style.display = 'flex';
+            } else if (quantity <= 5) {
+                stockIndicator.className = 'stock-indicator stock-low';
+                stockIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Low Stock';
+                stockIndicator.style.display = 'flex';
+            } else if (quantity <= 20) {
+                stockIndicator.className = 'stock-indicator stock-medium';
+                stockIndicator.innerHTML = '<i class="fas fa-minus-circle"></i> Medium Stock';
+                stockIndicator.style.display = 'flex';
+            } else {
+                stockIndicator.className = 'stock-indicator stock-high';
+                stockIndicator.innerHTML = '<i class="fas fa-check-circle"></i> Good Stock';
+                stockIndicator.style.display = 'flex';
+            }
+        }
+    });
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

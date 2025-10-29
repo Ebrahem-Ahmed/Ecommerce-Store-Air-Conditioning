@@ -1,0 +1,984 @@
+﻿@model Adidas.DTOs.Main.ProductDTOs.ProductCreateDto
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #00d4aa 0%, #02aab0 100%);
+        --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --surface: rgba(255, 255, 255, 0.95);
+        --surface-hover: rgba(255, 255, 255, 0.98);
+        --text-primary: #2c3e50;
+        --text-secondary: #6c757d;
+        --border-color: rgba(0, 0, 0, 0.08);
+        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-heavy: 0 15px 40px rgba(0, 0, 0, 0.15);
+        --border-radius: 16px;
+        --border-radius-small: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .product-form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f8f9fa;
+    }
+
+        .page-header h2 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .page-header p {
+            color: #6c757d;
+            margin: 0.5rem 0 0 0;
+            font-size: 1.1rem;
+        }
+
+    .form-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        padding: 2rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        flex: 1;
+        margin-bottom: 1.5rem;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        background-color: #ffffff;
+        box-sizing: border-box;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-control:hover {
+            border-color: #ced4da;
+        }
+
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+    }
+
+    /* Multiple image upload styles */
+    .image-upload-section {
+        background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: 1px solid #4caf50;
+    }
+
+        .image-upload-section h4 {
+            margin: 0 0 1rem 0;
+            color: #2e7d32;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+    .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .file-input-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        border: 2px dashed #4caf50;
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: #2e7d32;
+    }
+
+        .file-input-label:hover {
+            background: #f1f8f1;
+            border-color: #2e7d32;
+        }
+
+    .image-counter {
+        font-size: 0.9rem;
+        color: #2e7d32;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .images-preview-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .image-preview-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #4caf50;
+        background: #fff;
+    }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .image-preview-item .image-info {
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            color: #2e7d32;
+            background: #f8fff8;
+        }
+
+        .image-preview-item .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+
+            .image-preview-item .remove-image:hover {
+                background: #c82333;
+            }
+
+    .upload-guidelines {
+        background: #e8f4f8;
+        border: 1px solid #17a2b8;
+        border-radius: 6px;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #0c5460;
+    }
+
+        .upload-guidelines ul {
+            margin: 0.5rem 0 0 0;
+            padding-left: 1.5rem;
+        }
+
+        .upload-guidelines li {
+            margin-bottom: 0.25rem;
+        }
+
+    .price-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+    }
+
+        .price-section h4 {
+            margin: 0 0 1rem 0;
+            color: #495057;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+    .sale-price-info {
+        background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #856404;
+    }
+
+    .description-section {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: 1px solid #ffcc02;
+    }
+
+        .description-section h4 {
+            margin: 0 0 1rem 0;
+            color: #e65100;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        min-width: 120px;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e7e34 0%, #155724 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+        }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+    }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .text-danger {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+        font-weight: 500;
+    }
+
+    .required-field label::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .form-step {
+        background: #e3f2fd;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #2196f3;
+    }
+
+        .form-step h4 {
+            margin: 0 0 1rem 0;
+            color: #1976d2;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+    .character-counter {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 0.25rem;
+    }
+
+        .character-counter.warning {
+            color: #ffc107;
+        }
+
+        .character-counter.danger {
+            color: #dc3545;
+        }
+
+    .btn-loading {
+        position: relative;
+        color: transparent;
+    }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+    spin {
+        0%
+
+    {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+
+    }
+
+    /* Responsive design */
+    (max-width: 768px) {
+        .product-form-container
+
+    {
+        padding: 1rem;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .page-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .images-preview-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.5rem;
+    }
+
+    }
+
+    (max-width: 480px) {
+        .product-form-container
+
+    {
+        padding: 0.5rem;
+    }
+
+    .form-card {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .form-step, .price-section, .description-section, .image-upload-section {
+        padding: 1rem;
+    }
+
+    .page-header {
+        padding: 1rem;
+    }
+
+        .page-header h2 {
+            font-size: 1.4rem;
+        }
+
+        .page-header p {
+            font-size: 1rem;
+        }
+
+    .images-preview-container {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    }</style>
+
+<link href="~/css/Product.css" rel="stylesheet" />
+<div class="main-headerr my-5 ">
+    <div class="container">
+        <div class="header-content text-center">
+            <h1 class="mb-0">
+                <i class="fas fa-boxes me-2"></i>
+                🆕 Create New Product
+            </h1>
+            <p class="mb-0 mt-2 opacity-75">Add a new product to your Adidas collection</p>
+        </div>
+    </div>
+</div>
+
+<div class="form-card">
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="createProductForm">
+
+        <!-- Step 1: Basic Information -->
+        <div class="form-step" id="step1">
+            <h4>📋 Step 1: Basic Information</h4>
+
+            <div class="form-group required-field">
+                <label asp-for="Name">Product Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Enter product name (e.g., UltraBoost 22)" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group required-field">
+                    <label asp-for="CategoryId">📂 Category</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                        <option value="">Select a category</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+                @*   <div class="form-group required-field">
+                    <label asp-for="GenderTarget">👥 Target Gender</label>
+                    <select asp-for="GenderTarget" class="form-control" asp-items="ViewBag.Genders">
+                        <option value="">Select target gender</option>
+                    </select>
+                    <span asp-validation-for="GenderTarget" class="text-danger"></span>
+                </div> *@
+            </div>
+        </div>
+
+        <!-- Step 2: Multiple Images Upload -->
+        <div class="image-upload-section" id="step2">
+            <h4>🖼️ Step 2: Product Images</h4>
+
+            <div class="form-group">
+                <label asp-for="Images">Upload Product Images</label>
+                <div class="image-counter" id="imageCounter">0 / 10 images selected</div>
+
+                <div class="file-input-wrapper">
+                    <input asp-for="Images" type="file" class="file-input" id="imagesInput"
+                           accept="image/*" multiple />
+                    <label for="imagesInput" class="file-input-label" id="fileLabel">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Choose multiple images or drag & drop here</span>
+                    </label>
+                </div>
+
+                <div class="upload-guidelines">
+                    <strong>📸 Image Guidelines:</strong>
+                    <ul>
+                        <li>Maximum 10 images per product</li>
+                        <li>Maximum file size: 5MB per image</li>
+                        <li>Accepted formats: JPG, JPEG, PNG, GIF, WEBP</li>
+                        <li>First image will be used as the main product image</li>
+                    </ul>
+                </div>
+
+                <div class="images-preview-container" id="imagesPreview"></div>
+                <span asp-validation-for="Images" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Step 3: Pricing -->
+        <div class="price-section" id="step3">
+            <h4>💰 Step 3: Pricing Information</h4>
+
+            <div class="form-row">
+                <div class="form-group required-field">
+                    <label asp-for="Price">Regular Price</label>
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="0.00" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SalePrice">🏷️ Sale Price (Optional)</label>
+                    <input asp-for="SalePrice" class="form-control" type="number" step="0.01" min="0" placeholder="0.00" id="salePriceInput" />
+                    <span asp-validation-for="SalePrice" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="sale-price-info" id="salePriceInfo" style="display: none;">
+                <strong>💡 Sale Information:</strong> When a sale price is set, customers will see the discounted price with the original price crossed out.
+            </div>
+        </div>
+
+        <!-- Step 4: Descriptions -->
+        <div class="description-section" id="step4">
+            <h4>📝 Step 4: Product Details</h4>
+
+            <div class="form-group">
+                <label asp-for="Description">Full Description</label>
+                <textarea asp-for="Description" class="form-control"
+                          placeholder="Enter detailed product description including features, materials, and benefits..."
+                          maxlength="1000"></textarea>
+                <div class="character-counter" id="descCounter">0 / 1000 characters</div>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                ✅ Create Product
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                ❌ Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+            document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('createProductForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const salePriceInput = document.getElementById('salePriceInput');
+            const salePriceInfo = document.getElementById('salePriceInfo');
+            const priceInput = document.querySelector('input[asp-for="Price"]');
+            const imagesInput = document.getElementById('imagesInput');
+            const fileLabel = document.getElementById('fileLabel');
+            const imagesPreview = document.getElementById('imagesPreview');
+            const imageCounter = document.getElementById('imageCounter');
+
+            let selectedFiles = [];
+            const maxFiles = 10;
+            const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+            // Multiple images upload functionality
+            function updateImageCounter() {
+                const count = selectedFiles.length;
+                imageCounter.textContent = `${count} / ${maxFiles} images selected`;
+
+                if (count > 0) {
+                    fileLabel.innerHTML = `<i class="fas fa-images"></i><span>${count} image(s) selected - Click to add more</span>`;
+                } else {
+                    fileLabel.innerHTML = '<i class="fas fa-cloud-upload-alt"></i><span>Choose multiple images or drag & drop here</span>';
+                }
+            }
+
+            function validateImageFile(file) {
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+
+                if (!allowedTypes.includes(file.type)) {
+                    return 'Invalid file type. Please select JPG, PNG, GIF, or WEBP files only.';
+                }
+
+                if (file.size > maxFileSize) {
+                    return 'File size must be less than 5MB.';
+                }
+
+                return null;
+            }
+
+            function handleFileSelection(newFiles) {
+                const filesToAdd = Array.from(newFiles);
+
+                // Check if adding these files would exceed the limit
+                if (selectedFiles.length + filesToAdd.length > maxFiles) {
+                    alert(`You can only upload maximum ${maxFiles} images. Currently you have ${selectedFiles.length} image(s).`);
+                    return;
+                }
+
+                let validFiles = [];
+
+                filesToAdd.forEach(file => {
+                    const error = validateImageFile(file);
+                    if (error) {
+                        alert(`${file.name}: ${error}`);
+                        return;
+                    }
+
+                    // Check for duplicates
+                    if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                        alert(`${file.name} is already selected.`);
+                        return;
+                    }
+
+                    validFiles.push(file);
+                });
+
+                // Add valid files to selected files
+                validFiles.forEach(file => {
+                    selectedFiles.push(file);
+                    addImagePreview(file, selectedFiles.length - 1);
+                });
+
+                updateImageCounter();
+                updateFileInput();
+            }
+
+            function addImagePreview(file, index) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'image-preview-item';
+                    previewItem.dataset.index = index;
+
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <div class="image-info">
+                            <div>${file.name}</div>
+                            <div>${(file.size / 1024 / 1024).toFixed(1)}MB</div>
+                        </div>
+                        <button type="button" class="remove-image" onclick="removeImage(${index})">×</button>
+                    `;
+
+                    imagesPreview.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function updateFileInput() {
+                // Create a new DataTransfer object to properly set files
+                const dt = new DataTransfer();
+                selectedFiles.forEach(file => {
+                    dt.items.add(file);
+                });
+
+                // Set the files to the input
+                imagesInput.files = dt.files;
+
+                // Debug log
+                console.log('Updated file input with', selectedFiles.length, 'files');
+                console.log('Input files count:', imagesInput.files.length);
+            }
+
+            // Global function to remove images (called from HTML)
+            window.removeImage = function(index) {
+                selectedFiles.splice(index, 1);
+
+                // Remove the preview item
+                const previewItem = document.querySelector(`[data-index="${index}"]`);
+                if (previewItem) {
+                    previewItem.remove();
+                }
+
+                // Update indices for remaining items
+                document.querySelectorAll('.image-preview-item').forEach((item, newIndex) => {
+                    item.dataset.index = newIndex;
+                    const removeBtn = item.querySelector('.remove-image');
+                    removeBtn.setAttribute('onclick', `removeImage(${newIndex})`);
+                });
+
+                updateImageCounter();
+                updateFileInput();
+            };
+
+            // Image input event listener - simplified approach
+            imagesInput.addEventListener('change', function(e) {
+                console.log('File input changed, files count:', e.target.files.length);
+
+                if (e.target.files.length > 0) {
+                    // Clear previous selections and start fresh
+                    selectedFiles = [];
+                    imagesPreview.innerHTML = '';
+
+                    // Handle the new selection
+                    handleFileSelection(e.target.files);
+                }
+            });
+
+            // Drag and drop functionality
+            fileLabel.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.background = '#e3f2fd';
+                this.style.borderColor = '#2196f3';
+            });
+
+            fileLabel.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.background = '#fff';
+                this.style.borderColor = '#4caf50';
+            });
+
+            fileLabel.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.background = '#fff';
+                this.style.borderColor = '#4caf50';
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    // Clear the file input and handle drop
+                    imagesInput.value = '';
+                    selectedFiles = [];
+                    imagesPreview.innerHTML = '';
+                    handleFileSelection(files);
+                }
+            });
+
+            // Sale price functionality
+            function toggleSalePrice() {
+                const hasSalePrice = salePriceInput.value && parseFloat(salePriceInput.value) > 0;
+
+                if (hasSalePrice) {
+                    salePriceInfo.style.display = 'block';
+                } else {
+                    salePriceInfo.style.display = 'none';
+                }
+            }
+
+            // Validate sale price against regular price
+            function validateSalePrice() {
+                const regularPrice = parseFloat(priceInput.value) || 0;
+                const salePrice = parseFloat(salePriceInput.value) || 0;
+                const salePriceGroup = salePriceInput.closest('.form-group');
+                const existingWarning = salePriceGroup.querySelector('.sale-price-warning');
+
+                // Remove existing warning
+                if (existingWarning) {
+                    existingWarning.remove();
+                }
+
+                if (salePrice > 0 && regularPrice > 0 && salePrice >= regularPrice) {
+                    const warning = document.createElement('div');
+                    warning.className = 'text-danger sale-price-warning';
+                    warning.textContent = 'Sale price should be less than regular price';
+                    salePriceGroup.appendChild(warning);
+                    salePriceGroup.classList.add('has-error');
+                } else {
+                    salePriceGroup.classList.remove('has-error');
+                }
+            }
+
+            // Event listeners for sale functionality
+            salePriceInput.addEventListener('input', function() {
+                toggleSalePrice();
+                validateSalePrice();
+            });
+            priceInput.addEventListener('input', validateSalePrice);
+
+            // Form field enhancements
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.parentElement.classList.add('focused');
+                });
+
+                input.addEventListener('blur', function () {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+
+            // Character counters
+            function setupCharacterCounter(inputSelector, counterId, maxLength) {
+                const input = document.querySelector(inputSelector);
+                const counter = document.getElementById(counterId);
+
+                if (input && counter) {
+                    function updateCounter() {
+                        const length = input.value.length;
+                        counter.textContent = `${length} / ${maxLength} characters`;
+
+                        // Color coding
+                        counter.classList.remove('warning', 'danger');
+                        if (length > maxLength * 0.9) {
+                            counter.classList.add('danger');
+                        } else if (length > maxLength * 0.7) {
+                            counter.classList.add('warning');
+                        }
+                    }
+
+                    input.addEventListener('input', updateCounter);
+                    updateCounter();
+                }
+            }
+
+            setupCharacterCounter('textarea[asp-for="Description"]', 'descCounter', 1000);
+
+            // Form validation with enhanced feedback
+            form.addEventListener('submit', function (e) {
+                console.log('Form submitting...');
+                console.log('Selected files count:', selectedFiles.length);
+                console.log('Input files count:', imagesInput.files.length);
+
+                const requiredFields = document.querySelectorAll('.required-field input, .required-field select');
+                let hasErrors = false;
+
+                // Clear previous validation states
+                document.querySelectorAll('.form-group').forEach(group => {
+                    group.classList.remove('has-error', 'has-success');
+                });
+
+                // Check required fields
+                requiredFields.forEach(field => {
+                    const formGroup = field.closest('.form-group');
+
+                    if (!field.value.trim()) {
+                        formGroup.classList.add('has-error');
+                        hasErrors = true;
+                    } else {
+                        formGroup.classList.add('has-success');
+                    }
+                });
+
+                // Validate sale price
+                validateSalePrice();
+                if (document.querySelector('.sale-price-warning')) {
+                    hasErrors = true;
+                }
+
+                // Validate images - check both selectedFiles and input files
+                const hasImages = imagesInput.files.length > 0 || selectedFiles.length > 0;
+
+                if (!hasImages) {
+                    const imageSection = document.querySelector('.image-upload-section');
+                    const existingError = imageSection.querySelector('.images-error');
+
+                    if (!existingError) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'text-danger images-error';
+                        errorDiv.style.marginTop = '0.5rem';
+                        errorDiv.textContent = 'At least one product image is required';
+                        imageSection.appendChild(errorDiv);
+                    }
+                    hasErrors = true;
+                } else {
+                    const existingError = document.querySelector('.images-error');
+                    if (existingError) {
+                        existingError.remove();
+                    }
+                }
+
+                if (hasErrors) {
+                    e.preventDefault();
+
+                    // Scroll to first error and focus
+                    const firstError = document.querySelector('.has-error .form-control, .images-error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        if (firstError.focus) {
+                            setTimeout(() => firstError.focus(), 300);
+                        }
+                    }
+                } else {
+                    // Show loading state
+                    submitBtn.classList.add('btn-loading');
+                    submitBtn.disabled = true;
+
+                    // Re-enable after 10 seconds as fallback
+                    setTimeout(() => {
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.disabled = false;
+                    }, 10000);
+                }
+            });
+
+            // Price input formatting and validation
+            function setupPriceInput(input) {
+                if (!input) return;
+
+                input.addEventListener('blur', function () {
+                    if (this.value && !isNaN(this.value)) {
+                        const value = parseFloat(this.value);
+                        if (value >= 0) {
+                            this.value = value.toFixed(2);
+                        }
+                    }
+                });
+
+                input.addEventListener('input', function () {
+                    // Remove non-numeric characters except decimal point
+                    this.value = this.value.replace(/[^0-9.]/g, '');
+
+                    // Ensure only one decimal point
+                    const parts = this.value.split('.');
+                    if (parts.length > 2) {
+                        this.value = parts[0] + '.' + parts.slice(1).join('');
+                    }
+
+                    // Limit to 2 decimal places
+                    if (parts[1] && parts[1].length > 2) {
+                        this.value = parseFloat(this.value).toFixed(2);
+                    }
+                });
+            }
+
+            setupPriceInput(priceInput);
+            setupPriceInput(salePriceInput);
+
+            // Initialize counters
+            updateImageCounter();
+        });
+    </script>
+}

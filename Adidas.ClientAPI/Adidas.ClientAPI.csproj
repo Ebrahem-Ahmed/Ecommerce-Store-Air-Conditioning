@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\Main\**" />
+    <Compile Remove="Controllers\Operation\**" />
+    <Compile Remove="Controllers\People\**" />
+    <Compile Remove="Controllers\Separator\**" />
+    <Compile Remove="Controllers\Tracker\**" />
+    <Content Remove="Controllers\Main\**" />
+    <Content Remove="Controllers\Operation\**" />
+    <Content Remove="Controllers\People\**" />
+    <Content Remove="Controllers\Separator\**" />
+    <Content Remove="Controllers\Tracker\**" />
+    <EmbeddedResource Remove="Controllers\Main\**" />
+    <EmbeddedResource Remove="Controllers\Operation\**" />
+    <EmbeddedResource Remove="Controllers\People\**" />
+    <EmbeddedResource Remove="Controllers\Separator\**" />
+    <EmbeddedResource Remove="Controllers\Tracker\**" />
+    <None Remove="Controllers\Main\**" />
+    <None Remove="Controllers\Operation\**" />
+    <None Remove="Controllers\People\**" />
+    <None Remove="Controllers\Separator\**" />
+    <None Remove="Controllers\Tracker\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.19" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.19">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
+    <PackageReference Include="PayPal" Version="1.9.1" />
+    <PackageReference Include="PayPalCheckoutSdk" Version="1.0.4" />
+    <PackageReference Include="PayPalHttp" Version="1.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Adidas.Application\Adidas.Application.csproj" />
+    <ProjectReference Include="..\Adidas.Context\Adidas.Context.csproj" />
+    <ProjectReference Include="..\Adidas.Infra\Adidas.Infra.csproj" />
+  </ItemGroup>
+
+</Project>

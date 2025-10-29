@@ -1,0 +1,36 @@
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using Adidas.DTOs.CommonDTOs;
+using Adidas.DTOs.Main.ProductImageDTOs;
+
+namespace Adidas.DTOs.Main.Product_Variant_DTOs
+{
+    public class ProductVariantUpdateDto: BaseUpdateDto
+    {
+        
+        [Required]
+        public Guid ProductId { get; set; }  
+
+        [Required, MaxLength(50)]
+        public string Color { get; set; } = string.Empty;
+
+        [Required, MaxLength(20)]
+        public string Size { get; set; } = string.Empty;
+
+        [Required, Range(0, int.MaxValue)]
+        public int StockQuantity { get; set; }
+
+        public decimal PriceAdjustment { get; set; } = 0;
+        public string? ColorHex { get; set; }
+        public int SortOrder { get; set; }
+        public bool? IsActive { get; set; }
+         [Display(Name = "Product Images")]
+        public List<IFormFile>? Images { get; set; } = new List<IFormFile>();
+        public List<ProductImageDto>? ExistingImages { get; set; } = new List<ProductImageDto>();
+        public List<Guid>? DeleteImages { get; set; } = new List<Guid>();
+
+
+
+        public string? ImageUrl { get; set; }
+    }
+}
