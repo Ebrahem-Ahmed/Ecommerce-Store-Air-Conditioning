@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adidas.Context.Migrations
 {
     [DbContext(typeof(AdidasDbContext))]
-    [Migration("20251011144757_asdasas")]
-    partial class asdasas
+    [Migration("20251029165808_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -146,7 +146,7 @@ namespace Adidas.Context.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GenderTarget")
+                    b.Property<int?>("GenderTarget")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
@@ -372,9 +372,7 @@ namespace Adidas.Context.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Color")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -402,9 +400,7 @@ namespace Adidas.Context.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Size")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Sku")
                         .IsRequired()
@@ -423,6 +419,10 @@ namespace Adidas.Context.Migrations
 
                     b.HasIndex("AddedById");
 
+                    b.HasIndex("Color");
+
+                    b.HasIndex("Size");
+
                     b.HasIndex("Sku")
                         .IsUnique();
 
@@ -431,7 +431,8 @@ namespace Adidas.Context.Migrations
                     b.HasIndex("ProductId", "IsActive");
 
                     b.HasIndex("ProductId", "Size", "Color")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Size] IS NOT NULL AND [Color] IS NOT NULL");
 
                     b.ToTable("ProductVariants");
                 });

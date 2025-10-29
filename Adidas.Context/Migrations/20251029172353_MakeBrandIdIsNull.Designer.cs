@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adidas.Context.Migrations
 {
     [DbContext(typeof(AdidasDbContext))]
-    [Migration("20251027115102_allownullSize")]
-    partial class allownullSize
+    [Migration("20251029172353_MakeBrandIdIsNull")]
+    partial class MakeBrandIdIsNull
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -45,8 +45,8 @@ namespace Adidas.DTOs.Main.ProductDTOs
         [Required]
         public Guid CategoryId { get; set; }
 
-        [Required]
-        public Guid BrandId { get; set; }
+        
+        public Guid? BrandId { get; set; }
 
         // public ICollection<CreateProductVariantDto> Variants { get; set; } = new List<CreateProductVariantDto>();
         // public ICollection<CreateProductImageDto> Images { get; set; } = new List<CreateProductImageDto>();
