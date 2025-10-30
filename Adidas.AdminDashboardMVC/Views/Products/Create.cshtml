@@ -513,14 +513,16 @@
                     </select>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
-                @*   <div class="form-group required-field">
-                    <label asp-for="GenderTarget">👥 Target Gender</label>
-                    <select asp-for="GenderTarget" class="form-control" asp-items="ViewBag.Genders">
-                        <option value="">Select target gender</option>
+
+                <div class="form-group">
+                    <label asp-for="BrandId">🏷️ Brand (Optional)</label>
+                    <select asp-for="BrandId" class="form-control" asp-items="ViewBag.Brands">
+                        <option value="">--  Brand --</option>
                     </select>
-                    <span asp-validation-for="GenderTarget" class="text-danger"></span>
-                </div> *@
+                    <span asp-validation-for="BrandId" class="text-danger"></span>
+                </div>
             </div>
+
         </div>
 
         <!-- Step 2: Multiple Images Upload -->
