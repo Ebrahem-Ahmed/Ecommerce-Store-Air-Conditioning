@@ -149,10 +149,10 @@ namespace Adidas.Application.Services.Main
             var brands = _brandRepository.GetAllAsync().GetAwaiter().GetResult();
             var brand = brands.FirstOrDefault();
 
-            if (brand == null)
-            {
-                throw new Exception("No brand found in the database.");
-            }
+            //if (brand == null)
+            //{
+            //    throw new Exception("No brand found in the database.");
+            //}
 
             return new Product
             {
@@ -167,7 +167,7 @@ namespace Adidas.Application.Services.Main
                 MetaTitle = dto.MetaTitle,
                 MetaDescription = dto.MetaDescription,
                 CategoryId = dto.CategoryId,
-                BrandId = brand.Id,
+                BrandId = brand?.Id,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 IsActive = true

@@ -11,9 +11,8 @@ namespace Adidas.DTOs.Separator.Category_DTOs
         [StringLength(100, ErrorMessage = "Category name cannot exceed 100 characters")]
         public string Name { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "Slug cannot exceed 100 characters")]
-        public string Slug { get; set; }
+
+        public string? Slug { get; set; }
 
         [Required]
         public string? Description { get; set; }
@@ -29,7 +28,6 @@ namespace Adidas.DTOs.Separator.Category_DTOs
 
         public bool IsActive { get; set; }
 
-        [Required(ErrorMessage = "Category type is required")]
         public CategoryType? Type { get; set; }
     }
 }

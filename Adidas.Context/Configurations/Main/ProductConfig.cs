@@ -34,7 +34,9 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
         builder.Ignore(e => e.ReviewCount);
 
         // foreign keys
-        builder.Property(e => e.BrandId).IsRequired();
+        //  builder.Property(e => e.BrandId).IsRequired();
+        builder.HasIndex(e => e.BrandId);
+
         builder.Property(e => e.CategoryId).IsRequired();
 
         // relationships

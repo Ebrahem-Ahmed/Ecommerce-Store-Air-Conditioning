@@ -4,6 +4,7 @@ using Adidas.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adidas.Context.Migrations
 {
     [DbContext(typeof(AdidasDbContext))]
-    partial class AdidasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251030124548_updatecategory")]
+    partial class updatecategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,6 +130,7 @@ namespace Adidas.Context.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid?>("BrandId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CategoryId")
@@ -196,8 +200,6 @@ namespace Adidas.Context.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AddedById");
-
-                    b.HasIndex("BrandId");
 
                     b.HasIndex("CreatedAt");
 
@@ -1421,7 +1423,8 @@ namespace Adidas.Context.Migrations
                     b.HasOne("Adidas.Models.Separator.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Adidas.Models.Separator.Category", "Category")
                         .WithMany("Products")

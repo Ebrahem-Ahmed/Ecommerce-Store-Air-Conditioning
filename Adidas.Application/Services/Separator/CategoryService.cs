@@ -108,13 +108,13 @@ namespace Adidas.Application.Services.Separator
         public async Task<Result> CreateAsync(CategoryCreateDto createCategoryDto)
         {
             try
-            { 
+            {
                 var nameExists = await _categoryRepository.GetCategoryByNameAsync(createCategoryDto.Name);
                 if (nameExists != null)
                     return Result.Failure("Name already exists.");
 
-                 
-                 
+
+
                 var category = new Models.Separator.Category
                 {
                     ParentCategoryId = createCategoryDto.ParentCategoryId,
@@ -204,6 +204,12 @@ namespace Adidas.Application.Services.Separator
             if (category == null)
                 return Result.Failure("Category not found.");
 
+            // ✅ Generate slug if empty or null
+            if (string.IsNullOrWhiteSpace(dto.Slug))
+            {
+                dto.Slug = GenerateSlug(dto.Name);
+            }
+
             var nameExists = await _categoryRepository.GetCategoryByNameAsync(dto.Name);
             if (nameExists != null && nameExists.Id != category.Id)
                 return Result.Failure("Name already exists.");
@@ -212,8 +218,8 @@ namespace Adidas.Application.Services.Separator
             if (slugExists != null && slugExists.Id != category.Id)
                 return Result.Failure("Slug already exists.");
 
-             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
-             {
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            {
                 if (!string.IsNullOrEmpty(category.ImageUrl))
                     await DeleteOldImageAsync(category.ImageUrl);
 
@@ -236,18 +242,19 @@ namespace Adidas.Application.Services.Separator
             category.Name = dto.Name;
             category.Slug = dto.Slug;
             category.Description = dto.Description;
-            category.ParentCategoryId = dto.ParentCategoryId;
             category.Type = dto.Type;
-            //category.IsActive = dto.IsActive;
-            //category.SortOrder = dto.SortOrder;
+
+            // ✅ DON'T update ParentCategoryId - preserve the original type
+            // category.ParentCategoryId = dto.ParentCategoryId;
 
             // 🔹 Save changes
             var rowsAffected = await _categoryRepository.SaveChangesAsync();
-
             return rowsAffected > 0
                 ? Result.Success()
                 : Result.Failure("No changes were saved. Entity might be unchanged.");
         }
+
+        // ✅ Helper method to generate slug
 
         public async Task<CategoryUpdateDto> GetCategoryToEditByIdAsync(Guid id)
         {

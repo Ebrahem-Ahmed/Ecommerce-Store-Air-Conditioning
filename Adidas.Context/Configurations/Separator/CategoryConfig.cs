@@ -4,23 +4,23 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Adidas.Context.Configurations.People;
 
-public class CategoryConfig: IEntityTypeConfiguration<Category>
+public class CategoryConfig : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
         BaseAuditableEntityConfig.Configure(builder);
-        
+
         // fields
         // indexes
         builder.HasIndex(e => e.Slug).IsUnique();
         builder.HasIndex(e => new { e.ParentCategoryId, e.IsActive });
         builder.HasIndex(e => e.SortOrder);
-        
+        builder.HasIndex(e => e.Slug);
+
         builder.Property(e => e.Name).IsRequired().HasMaxLength(100);
-        builder.Property(e => e.Slug).IsRequired().HasMaxLength(100);
         builder.Property(e => e.ImageUrl).HasMaxLength(500);
         builder.Property(e => e.Type)
-        .HasConversion<string>()  
+        .HasConversion<string>()
         .HasMaxLength(20);
         // foreign keys
 
@@ -29,8 +29,8 @@ public class CategoryConfig: IEntityTypeConfiguration<Category>
             .WithMany(p => p.SubCategories)
             .HasForeignKey(e => e.ParentCategoryId)
             .OnDelete(DeleteBehavior.Restrict);
-        
-        
+
+
         // Seed Categories
         //builder.HasData(
         //    new Category { Name = "Footwear", Slug = "footwear", IsActive = true, SortOrder = 1 },

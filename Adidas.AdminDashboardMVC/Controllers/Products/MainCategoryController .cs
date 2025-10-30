@@ -38,24 +38,24 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
             };
             return View(model);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CategoryCreateDto model)
         {
-            // Force this to be a main category
-            model.ParentCategoryId = null;
+            // ✅ Remove validation error first
+            ModelState.Remove("ParentCategoryId");
+
+            // ✅ DON'T force it to null - let the form decide
+            // model.ParentCategoryId will be:
+            // - null if creating Main Category
+            // - Guid if creating Sub-Category
 
             if (!ModelState.IsValid)
             {
-                
                 return View(model);
-             }
-
-         
+            }
 
             var result = await _categoryService.CreateAsync(model);
-
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError(string.Empty, result.Error);
@@ -63,7 +63,10 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
                 return View(model);
             }
 
-            TempData["Success"] = "Main Category created successfully!";
+            // ✅ Dynamic success message
+            var categoryType = model.ParentCategoryId == null ? "Main Category" : "Sub-Category";
+            TempData["Success"] = $"{categoryType} created successfully!";
+
             return RedirectToAction("Index");
         }
 
@@ -88,8 +91,8 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CategoryUpdateDto model)
         {
-            // Ensure this remains a main category
-            model.ParentCategoryId = null;
+            // ✅ Remove validation error for ParentCategoryId first
+            ModelState.Remove("ParentCategoryId");
 
             if (!ModelState.IsValid)
             {
@@ -105,22 +108,18 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
             //        ViewBag.CategoryId = model.Id;
             //        return View(model);
             //    }
-
             //    var fileName = Guid.NewGuid() + Path.GetExtension(ImageFile.FileName);
             //    var relativePath = Path.Combine("uploads", "categories", fileName);
             //    var absolutePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "categories");
-
             //    if (!Directory.Exists(absolutePath))
             //    {
             //        Directory.CreateDirectory(absolutePath);
             //    }
-
             //    var filePath = Path.Combine(absolutePath, fileName);
             //    using (var stream = new FileStream(filePath, FileMode.Create))
             //    {
             //        await ImageFile.CopyToAsync(stream);
             //    }
-
             //    model.ImageUrl = "/" + relativePath.Replace("\\", "/");
             //}
 
@@ -133,7 +132,7 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
                 return View(model);
             }
 
-            TempData["Success"] = "Main Category updated successfully!";
+            TempData["Success"] = "Category updated successfully!";
             return RedirectToAction("Index");
         }
 
