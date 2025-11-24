@@ -82,7 +82,7 @@ namespace Adidas.Application.Services.Main
                 IsActive = p.IsActive,
                 ImageUrl = p.ImageUrl,
                 CategoryName = p.Category != null ? p.Category.Name : null,
-                //BrandName = p.Brand?.Name,
+                BrandName = p.Brand?.Name ?? "No Brand",
 
                 Category = p.Category != null ? new CategoryDto
                 {
@@ -492,6 +492,11 @@ namespace Adidas.Application.Services.Main
 
             if (updateDto.CategoryId.HasValue)
                 product.CategoryId = updateDto.CategoryId.Value;
+            // ✅ ضيف السطرين دول هنا!
+            if (updateDto.BrandId.HasValue)
+                product.BrandId = updateDto.BrandId.Value;
+            else
+                product.BrandId = null;  // للسماح بإزالة Brand
 
             if (updateDto.MetaTitle != null)
                 product.MetaTitle = updateDto.MetaTitle;
