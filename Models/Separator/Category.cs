@@ -6,8 +6,8 @@ public enum CategoryType
 {
     Men,
     Women,
-    Kids,
-    Sports,
+    موبايل,
+    تكيفات,
 }
 
 public class Category : BaseAuditableEntity

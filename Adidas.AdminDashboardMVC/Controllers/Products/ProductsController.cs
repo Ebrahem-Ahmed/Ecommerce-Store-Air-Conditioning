@@ -46,6 +46,8 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
                     .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
                     .ToList();
 
+
+
                 var brands = await _brandService.GetAll().ToListAsync();
                 // ViewBag.Brands = brands
                 //     .Select(b => new SelectListItem { Value = b.Id.ToString(), Text = b.Name })
@@ -110,7 +112,7 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
             {
                 ModelState.AddModelError("Images", "You should add at least one image");
             }
-    
+
             // ✅ Sale price validation
             if (model.SalePrice >= model.Price)
             {
@@ -158,7 +160,7 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
                 GenderTarget = product.GenderTarget,
                 Description = product.Description,
                 InStock = product.InStock,
-                ExistingImages = product.Images.Where(p=>p.VariantId==null).ToList(),
+                ExistingImages = product.Images.Where(p => p.VariantId == null).ToList(),
                 CurrentImagePath = product.ImageUrl // Use ImageUrl from your ProductDto
             };
             return View(updateDto);
@@ -193,12 +195,16 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
         }
         private async Task PopulateDropdownsAsync()
         {
-            var categories = await _categoryService.GetFilteredCategoriesAsync("Sub", "", "");
-            ViewBag.Categories = categories.Select(c => new SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = c.Name
-            }).ToList();
+            // جيب فقط الـ SubCategories
+            var subCategories = await _categoryService.GetSubCategoriesOnlyAsync();
+
+            ViewBag.Categories = subCategories
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                })
+                .ToList();
 
             var brands = await _brandService.GetAll().ToListAsync();
             ViewBag.Brands = brands.Select(b => new SelectListItem

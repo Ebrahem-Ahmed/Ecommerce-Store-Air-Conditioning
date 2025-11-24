@@ -44,7 +44,10 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
         {
             // ✅ Remove validation error first
             ModelState.Remove("ParentCategoryId");
+            ModelState.Remove("Slug");
 
+            // Auto-set slug from the name
+            model.Slug = model.Name;
             // ✅ DON'T force it to null - let the form decide
             // model.ParentCategoryId will be:
             // - null if creating Main Category

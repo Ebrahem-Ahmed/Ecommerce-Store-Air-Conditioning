@@ -31,7 +31,8 @@ namespace Adidas.ClientAPI.Controllers.Product
         [HttpGet("GetAllMainCategories")]
         public async Task<IActionResult> GetAllMainCategories()
         {
-            var categories = await _categoryService.GetFilteredCategoriesAsync("Main", "Active", "");
+            // نمرر null بدل "Main" علشان نتجاهل الـ Type
+            var categories = await _categoryService.GetFilteredCategoriesAsync(null, "Active", null);
             return Ok(categories);
         }
 

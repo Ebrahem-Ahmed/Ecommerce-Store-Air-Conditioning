@@ -12,6 +12,7 @@
     </div>
 
     <div class="card p-4 shadow-sm">
+
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
@@ -29,7 +30,7 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
 
-@*                     <div class="mb-3">
+                    @*                     <div class="mb-3">
                         <label asp-for="Type" class="form-label">Category Type</label>
                         <select asp-for="Type" class="form-select">
                             <option value="">Select Category Type</option>

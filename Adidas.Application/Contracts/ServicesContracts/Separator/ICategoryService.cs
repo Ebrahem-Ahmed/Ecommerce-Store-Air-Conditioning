@@ -5,13 +5,13 @@ using Adidas.Models.Separator;
 
 namespace Adidas.Application.Contracts.ServicesContracts.Separator
 {
-    public interface ICategoryService 
+    public interface ICategoryService
     {
         // Category-specific methods
         Task<OperationResult<IEnumerable<CategoryDto>>> GetAllAsync();
         Task<IEnumerable<CategoryDto>> GetMainCategoriesAsync();
         Task<Result> CreateAsync(CategoryCreateDto createCategoryDto);
-        Task<Result>DeleteAsync(Guid id);
+        Task<Result> DeleteAsync(Guid id);
         Task<Result> UpdateAsync(CategoryUpdateDto updateCategoryDto);
         Task<CategoryUpdateDto> GetCategoryToEditByIdAsync(Guid id);
         Task<CategoryDto> GetCategoryDetailsAsync(Guid id);
@@ -20,8 +20,8 @@ namespace Adidas.Application.Contracts.ServicesContracts.Separator
         Task<Result> ToggleCategoryStatusAsync(Guid categoryId);
         Task<CategoryDto> GetSubCategoriesByCategoryId(Guid id);
         Task<CategoryDto> GetSubCategoriesByCategorySlug(string slug);
-        Task <IEnumerable<CategoryDto>> GetMainCategoriesByType(string Type);
-
+        Task<IEnumerable<CategoryDto>> GetMainCategoriesByType(string Type);
+        Task<List<Category>> GetSubCategoriesOnlyAsync();
         // Task<IEnumerable<CategoryDto>> GetAllAsync();
 
 

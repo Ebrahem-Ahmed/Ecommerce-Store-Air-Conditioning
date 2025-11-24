@@ -134,8 +134,8 @@ namespace Adidas.Context.Seeds
             {
                 CategoryType.Men,
                 CategoryType.Women,
-                CategoryType.Kids,
-                CategoryType.Sports
+                CategoryType.موبايل,
+                CategoryType.تكيفات
             };
             // Categories (50 records)
             //var categories = new List<Category>();

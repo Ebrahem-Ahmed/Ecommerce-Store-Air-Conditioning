@@ -1,16 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Adidas.Application.Contracts.RepositoriesContracts.Separator;
-using Adidas.Application.Contracts.ServicesContracts.Separator;
-using Adidas.Models.Separator;
-using Adidas.DTOs.Separator.Category_DTOs;
-using Adidas.DTOs.Common_DTOs;
-using Microsoft.Data.SqlClient;
-using Adidas.DTOs.CommonDTOs;
+﻿using Adidas.Application.Contracts.RepositoriesContracts.Separator;
 using Adidas.Application.Contracts.ServicesContracts.Main;
-using CloudinaryDotNet.Actions;
+using Adidas.Application.Contracts.ServicesContracts.Separator;
+using Adidas.Context;
+using Adidas.DTOs.Common_DTOs;
+using Adidas.DTOs.CommonDTOs;
+using Adidas.DTOs.Separator.Category_DTOs;
+using Adidas.Models.Separator;
 using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 
 namespace Adidas.Application.Services.Separator
@@ -21,6 +23,7 @@ namespace Adidas.Application.Services.Separator
         private readonly IProductService _productService;
         private readonly Cloudinary _cloudinary;
         private readonly ILogger<CategoryService> _logger;
+        private readonly AdidasDbContext _context;
 
         private const string DefaultImageUrl = null; // e.g., "https://res.cloudinary.com/<cloud>/image/upload/v.../placeholder.png";
 
@@ -28,12 +31,14 @@ namespace Adidas.Application.Services.Separator
             ICategoryRepository categoryRepository,
             IProductService productService,
             Cloudinary cloudinary,
-            ILogger<CategoryService> logger)
+            ILogger<CategoryService> logger,
+           AdidasDbContext _context)
         {
             _categoryRepository = categoryRepository;
             _productService = productService;
             _cloudinary = cloudinary;
             _logger = logger;
+            this._context = _context;
         }
 
         public async Task<OperationResult<IEnumerable<CategoryDto>>> GetAllAsync()
@@ -72,18 +77,9 @@ namespace Adidas.Application.Services.Separator
                 .Trim();
         }
 
-        public async Task<IEnumerable<CategoryDto>> GetFilteredCategoriesAsync(string categoryType, string statusFilter,
-            string searchTerm)
+        public async Task<IEnumerable<CategoryDto>> GetFilteredCategoriesAsync(string categoryType, string statusFilter, string searchTerm)
         {
             var categories = await _categoryRepository.GetAllAsync(c => c.ParentCategory, c => c.Products);
-
-            if (!string.IsNullOrEmpty(categoryType))
-            {
-                if (categoryType == "Main")
-                    categories = categories.Where(c => c.ParentCategoryId == null).ToList();
-                else if (categoryType == "Sub")
-                    categories = categories.Where(c => c.ParentCategoryId != null).ToList();
-            }
 
             if (!string.IsNullOrEmpty(statusFilter))
             {
@@ -97,14 +93,22 @@ namespace Adidas.Application.Services.Separator
                     c.Name != null && c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            // Include subcategories for main categories
-            return categories.Select(c =>
-                c.ParentCategoryId == null
-                    ? MapToCategoryDto(c, includeSubCategories: true)
-                    : MapToCategoryDto(c)
-            ).ToList();
-        }
+            // ابني قائمة رئيسية وفرعية يدوياً
+            var mainCategories = categories
+                .Where(c => c.ParentCategoryId == null)
+                .Select(c =>
+                {
+                    var dto = MapToCategoryDto(c, includeRelations: true);
+                    dto.SubCategories = categories
+                        .Where(sc => sc.ParentCategoryId == c.Id)
+                        .Select(sc => MapToCategoryDto(sc))
+                        .ToList();
+                    return dto;
+                })
+                .ToList();
 
+            return mainCategories;
+        }
         public async Task<Result> CreateAsync(CategoryCreateDto createCategoryDto)
         {
             try
@@ -349,9 +353,10 @@ namespace Adidas.Application.Services.Separator
                     categories = categories
                         .Where(c => c.ParentCategoryId == null
                                     && c.IsActive
-                                    && c.Type == parsedType)
+                                    && (c.Type == parsedType || c.Name == Type)) // ✅ ضفنا الشرط ده
                         .ToList();
                 }
+
                 else
                 {
                     categories = new List<Models.Separator.Category>();
@@ -537,6 +542,14 @@ namespace Adidas.Application.Services.Separator
                 Type = category.Type,
                 IsActive = category.IsActive,
             };
+        }
+
+        public async Task<List<Category>> GetSubCategoriesOnlyAsync()
+        {
+            return await _context.Categories
+                .Where(c => c.ParentCategoryId != null) // فقط اللي ليها أب
+                .OrderBy(c => c.Name)
+                .ToListAsync();
         }
 
         #endregion
