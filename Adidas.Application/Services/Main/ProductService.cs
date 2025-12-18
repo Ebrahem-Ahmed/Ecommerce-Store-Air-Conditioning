@@ -1,4 +1,5 @@
 ﻿using Adidas.Application.Contracts.RepositoriesContracts.Main;
+using Adidas.Application.Contracts.RepositoriesContracts.Separator;
 using Adidas.Application.Contracts.ServicesContracts.Feature;
 using Adidas.Application.Contracts.ServicesContracts.Main;
 using Adidas.DTOs.Common_DTOs;
@@ -9,8 +10,9 @@ using Adidas.DTOs.Main.ProductDTOs;
 using Adidas.DTOs.Main.ProductImageDTOs;
 using Adidas.DTOs.Separator.Category_DTOs;
 using Adidas.Models.Main;
-using CloudinaryDotNet.Actions;
+using Adidas.Models.Separator;
 using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +22,6 @@ using Models.People;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Adidas.Application.Contracts.RepositoriesContracts.Separator;
 using System.Threading.Tasks;
 
 namespace Adidas.Application.Services.Main
@@ -83,6 +84,9 @@ namespace Adidas.Application.Services.Main
                 ImageUrl = p.ImageUrl,
                 CategoryName = p.Category != null ? p.Category.Name : null,
                 BrandName = p.Brand?.Name ?? "No Brand",
+                BrandId = p.BrandId ?? Guid.Empty,
+
+
 
                 Category = p.Category != null ? new CategoryDto
                 {

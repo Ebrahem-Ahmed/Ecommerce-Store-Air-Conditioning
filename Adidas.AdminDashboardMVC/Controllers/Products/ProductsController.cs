@@ -146,25 +146,30 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
         public async Task<IActionResult> Edit(Guid id)
         {
             var result = await _productService.GetByIdAsync(id);
-            if (result.IsSuccess == false) return NotFound();
+            if (!result.IsSuccess) return NotFound();
+
             var product = result.Data;
+
             await PopulateDropdownsAsync();
+
             var updateDto = new ProductUpdateDto
             {
                 Id = product.Id,
                 Name = product.Name,
                 Price = product.Price,
                 SalePrice = product.SalePrice,
-                CategoryId = product.CategoryId,
-                // Removed BrandId
+                CategoryId = product.CategoryId,   // مهم
+                BrandId = product.BrandId,         // مهم
                 GenderTarget = product.GenderTarget,
                 Description = product.Description,
                 InStock = product.InStock,
                 ExistingImages = product.Images.Where(p => p.VariantId == null).ToList(),
-                CurrentImagePath = product.ImageUrl // Use ImageUrl from your ProductDto
+                CurrentImagePath = product.ImageUrl
             };
+
             return View(updateDto);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

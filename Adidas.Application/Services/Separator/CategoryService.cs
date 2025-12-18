@@ -179,11 +179,13 @@ namespace Adidas.Application.Services.Separator
                 id,
                 c => c.Products,
                 c => c.SubCategories);
+
             if (category == null)
                 return Result.Failure("Category not found.");
 
             if (category.SubCategories.Count() != 0)
                 return Result.Failure("Cannot delete a category that has subcategories.");
+
             if (category.Products.Count() != 0)
                 return Result.Failure("Cannot delete a category that has products.");
 
@@ -193,14 +195,22 @@ namespace Adidas.Application.Services.Separator
                 await DeleteOldImageAsync(category.ImageUrl);
             }
 
-            await _categoryRepository.HardDeleteAsync(id);
+            // بدل HardDeleteAsync(id) باستعمال الكيان نفسه
+            await _categoryRepository.HardDeleteAsync(category.Id);
+            // أو لو HardDeleteAsync بياخد كيان:
+            // await _categoryRepository.HardDeleteAsync(category);
+
             var result = await _categoryRepository.SaveChangesAsync();
 
-            return result == null ? Result.Failure("Failed to delete category.") : Result.Success();
+            return result == null
+                ? Result.Failure("Failed to delete category.")
+                : Result.Success();
         }
+
 
         public async Task<Result> UpdateAsync(CategoryUpdateDto dto)
         {
+            // منع تعيين نفس الكاتيجوري كـ Parent لنفسها
             if (dto.Id == dto.ParentCategoryId)
                 return Result.Failure("You cannot assign a category as its own parent.");
 
@@ -208,7 +218,7 @@ namespace Adidas.Application.Services.Separator
             if (category == null)
                 return Result.Failure("Category not found.");
 
-            // ✅ Generate slug if empty or null
+            // Generate slug if empty or null
             if (string.IsNullOrWhiteSpace(dto.Slug))
             {
                 dto.Slug = GenerateSlug(dto.Name);
@@ -222,6 +232,7 @@ namespace Adidas.Application.Services.Separator
             if (slugExists != null && slugExists.Id != category.Id)
                 return Result.Failure("Slug already exists.");
 
+            // تحديث الصورة لو فيه ملف جديد
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
                 if (!string.IsNullOrEmpty(category.ImageUrl))
@@ -248,8 +259,8 @@ namespace Adidas.Application.Services.Separator
             category.Description = dto.Description;
             category.Type = dto.Type;
 
-            // ✅ DON'T update ParentCategoryId - preserve the original type
-            // category.ParentCategoryId = dto.ParentCategoryId;
+            // ✅ هنا نسمح بتغيير الـ ParentCategoryId (مهم للـ Subcategories)
+            category.ParentCategoryId = dto.ParentCategoryId;
 
             // 🔹 Save changes
             var rowsAffected = await _categoryRepository.SaveChangesAsync();
@@ -257,6 +268,7 @@ namespace Adidas.Application.Services.Separator
                 ? Result.Success()
                 : Result.Failure("No changes were saved. Entity might be unchanged.");
         }
+
 
         // ✅ Helper method to generate slug
 
@@ -365,6 +377,36 @@ namespace Adidas.Application.Services.Separator
 
             return categories.Select(c => MapToCategoryDto(c, includeSubCategories: true)).ToList();
         }
+        #region Abdallah
+        public async Task<IEnumerable<CategoryDto>> GetFilteredSubcategoriesAsync(string statusFilter, string searchTerm)
+        {
+            var categories = await _categoryRepository.GetAllAsync(c => c.ParentCategory, c => c.Products);
+
+            // فلتر الساب كاتيجوري بس
+            categories = categories
+                .Where(c => c.ParentCategoryId != null) // ← Sub فقط
+                .ToList();
+
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                bool isActive = statusFilter == "Active";
+                categories = categories.Where(c => c.IsActive == isActive).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                categories = categories.Where(c =>
+                    c.Name != null && c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            // رجّع Subcategories مباشرة
+            return categories
+                .Select(c => MapToCategoryDto(c, includeRelations: true))
+                .OrderBy(c => c.Name)
+                .ToList();
+        }
+
+        #endregion
 
         #region Image Handling Methods
 

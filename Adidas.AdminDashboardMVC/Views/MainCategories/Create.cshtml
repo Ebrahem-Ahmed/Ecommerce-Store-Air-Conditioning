@@ -5,81 +5,310 @@
     ViewData["Title"] = "Add New Main Category";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Add New Main Category</h2>
-        <a asp-action="Index" class="btn btn-secondary">Back to Main Categories List</a>
-    </div>
+<style>
+    :root {
+        --bg-main: #f3f4f6;
+        --bg-card: rgba(255, 255, 255, 0.9);
+        --border-soft: rgba(209, 213, 219, 0.9);
+        --accent: #0ea5e9;
+        --accent-soft: rgba(14, 165, 233, 0.2);
+        --text-main: #111827;
+        --text-muted: #6b7280;
+    }
 
-    <div class="card p-4 shadow-sm">
+    body {
+        background: radial-gradient(circle at top, #e5f2ff 0, #f9fafb 40%, #eef2ff 100%);
+        color: var(--text-main);
+    }
 
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    .category-layout {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+    }
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+    .glass-card {
+        background: var(--bg-card);
+        border-radius: 1.5rem;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 18px 40px rgba(148, 163, 184, 0.35), 0 0 0 1px rgba(209, 213, 219, 0.65);
+        backdrop-filter: blur(14px);
+    }
+
+    .card-gradient-border {
+        position: relative;
+    }
+
+        .card-gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.65), rgba(129, 140, 248, 0.55));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+    .page-header-title {
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        color: #111827;
+    }
+
+    .badge-subtitle {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+        border-radius: 999px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .chip {
+        border-radius: 999px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+    }
+
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #111827;
+        margin-bottom: 0.25rem;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: rgba(249, 250, 251, 0.9);
+        border-radius: 0.75rem;
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        color: #111827;
+        font-size: 0.9rem;
+    }
+
+        .form-control::placeholder {
+            color: rgba(156, 163, 175, 0.9);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft), 0 0 0 4px rgba(14, 165, 233, 0.18);
+            color: #111827;
+        }
+
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    .alert-info {
+        background: #eff6ff;
+        border-color: rgba(59, 130, 246, 0.4);
+        color: #1d4ed8;
+        border-radius: 0.9rem;
+        font-size: 0.8rem;
+    }
+
+    .upload-box {
+        border-radius: 1rem;
+        border: 1px dashed rgba(156, 163, 175, 0.9);
+        background: radial-gradient(circle at top left, rgba(191, 219, 254, 0.5), #f9fafb);
+    }
+
+        .upload-box:hover {
+            border-color: var(--accent);
+            background: radial-gradient(circle at top left, rgba(191, 219, 254, 0.8), #ffffff);
+        }
+
+    .preview-frame {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        background: #f3f4f6;
+    }
+
+    .btn-primary {
+        border-radius: 999px;
+        padding-inline: 1.75rem;
+        padding-block: 0.55rem;
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        border: none;
+        box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35), 0 0 0 1px rgba(148, 163, 184, 0.9);
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #ffffff;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0284c7, #4f46e5);
+            box-shadow: 0 14px 28px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(148, 163, 184, 1);
+        }
+
+    .btn-outline-secondary {
+        border-radius: 999px;
+        font-size: 0.85rem;
+        border-color: rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+        background-color: #ffffff;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+    .btn-light {
+        border-radius: 999px;
+        font-size: 0.85rem;
+        background-color: #f9fafb;
+        border-color: rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+    }
+
+        .btn-light:hover {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+    .card-footer {
+        border-top-color: rgba(209, 213, 219, 0.9);
+    }
+
+    .alert-danger {
+        border-radius: 0.9rem;
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #b91c1c;
+        font-size: 0.85rem;
+    }
+
+    @@media (max-width: 768px) {
+        .category-layout {
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<main class="container category-layout py-4">
+    <div class="row justify-content-center w-100">
+        <div class="col-xl-8 col-lg-9">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <div class="badge-subtitle mb-2">
+                        <i class="bi bi-grid-1x2 me-1"></i>
+                        Category Management
                     </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label"></label>
-                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-
-                    @*                     <div class="mb-3">
-                        <label asp-for="Type" class="form-label">Category Type</label>
-                        <select asp-for="Type" class="form-select">
-                            <option value="">Select Category Type</option>
-                            @{
-                                var categoryTypes = Html.GetEnumSelectList<CategoryType>();
-                            }
-                            @foreach (var item in categoryTypes)
-                            {
-                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
-                            }
-                        </select>
-                        <span asp-validation-for="Type" class="text-danger"></span>
-                        <small class="form-text text-muted">Choose the type of category (Men, Women, Kids, Sports)</small>
-                    </div>
- *@
-                    <input type="hidden" asp-for="Slug" />
-                    <!-- Force ParentCategoryId to be null for main categories -->
-                    <input type="hidden" asp-for="ParentCategoryId" />
-
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        This will be created as a <strong>Main Category</strong> (no parent category).
-                    </div>
+                    <h2 class="mb-1 page-header-title">Create Main Category</h2>
+                    <p class="mb-0 text-muted">
+                        Add a new main category to better structure your catalog and navigation.
+                    </p>
                 </div>
-
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="ImageFile" class="form-label"></label>
-                        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
-                        <span asp-validation-for="ImageFile" class="text-danger"></span>
-
-                        <small class="form-text text-muted">Upload an image for this main category. Max file size: 5MB.</small>
-
-                        <img id="imagePreview"
-                             src="#"
-                             alt="Logo Preview"
-                             class="mt-3 rounded w-100"
-                             style="max-height: 200px; display: none;" />
+                <div class="d-none d-md-flex flex-column align-items-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left-short me-1"></i>
+                        Back to list
+                    </a>
+                    <div class="chip">
+                        <i class="bi bi-lightning-charge me-1 text-warning"></i>
+                        Tip: Keep names short and clear
                     </div>
                 </div>
             </div>
 
-            <div class="mt-4 border-top pt-3">
-                <button type="submit" class="btn btn-primary me-2">Add Main Category</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-            </div>
-        </form>
+            <section class="card-gradient-border glass-card p-1">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body pb-3">
+                        <form asp-action="Create" method="post" enctype="multipart/form-data" id="categoryForm">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
+
+                            <div class="row g-4">
+                                <div class="col-md-7">
+                                    <div class="mb-3">
+                                        <label asp-for="Name" class="form-label"></label>
+                                        <input asp-for="Name" class="form-control form-control-lg" placeholder="e.g. Men, Women, Kids, Sports" />
+                                        <span asp-validation-for="Name" class="text-danger small"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Description" class="form-label"></label>
+                                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe what belongs in this category"></textarea>
+                                        <span asp-validation-for="Description" class="text-danger small"></span>
+                                    </div>
+
+                                    <input type="hidden" asp-for="Slug" />
+                                    <input type="hidden" asp-for="ParentCategoryId" />
+
+                                    <div class="alert alert-info d-flex align-items-start mt-2">
+                                        <i class="bi bi-info-circle me-2 fs-5 text-primary"></i>
+                                        <div class="small">
+                                            This category will be created as a <strong>Main Category</strong>, so it will not have any parent category.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                                        <label asp-for="ImageFile" class="form-label mb-0">Category Image</label>
+                                        <span class="text-muted small">Optional</span>
+                                    </div>
+
+                                    <div class="upload-box p-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
+                                                 style="width:32px;height:32px;background:#ffffff;border:1px solid rgba(209,213,219,0.9);">
+                                                <i class="bi bi-image text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="small text-muted">Drag & drop or click to upload</div>
+                                                <div class="small" style="font-size:0.75rem;">Recommended: 800×600px, up to 5MB.</div>
+                                            </div>
+                                        </div>
+
+                                        <input asp-for="ImageFile" type="file" class="form-control form-control-sm bg-transparent border-0 px-0" accept="image/*" />
+                                        <span asp-validation-for="ImageFile" class="text-danger small d-block mt-1"></span>
+
+                                        <div class="mt-3 preview-frame" id="previewContainer" style="display:none;">
+                                            <img id="imagePreview"
+                                                 src="#"
+                                                 alt="Category Image Preview"
+                                                 class="w-100"
+                                                 style="max-height:220px;object-fit:cover;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-transparent d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 pt-3">
+                        <div class="d-flex align-items-center text-muted small">
+                            <i class="bi bi-shield-check text-success me-2"></i>
+                            Changes are validated before saving.
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Index" class="btn btn-light btn-sm">
+                                Cancel
+                            </a>
+                            <button type="submit" form="categoryForm" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i>
+                                Create Category
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
     </div>
-</div>
+</main>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
@@ -116,20 +345,23 @@
 
         const imageInput = document.getElementById('ImageFile');
         const imagePreview = document.getElementById('imagePreview');
+        const previewContainer = document.getElementById('previewContainer');
 
-        imageInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
+        if (imageInput && imagePreview && previewContainer) {
+            imageInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = '#';
+                    previewContainer.style.display = 'none';
                 }
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.src = '#';
-                imagePreview.style.display = 'none';
-            }
-        });
+            });
+        }
     });
 </script>

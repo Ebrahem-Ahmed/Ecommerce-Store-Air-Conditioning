@@ -22,13 +22,15 @@ namespace Adidas.AdminDashboardMVC.Controllers.Products
 
         public async Task<IActionResult> Index(string statusFilter, string searchTerm)
         {
-            var categories = await _categoryService.GetFilteredCategoriesAsync("Sub", statusFilter, searchTerm);
+            // كان: GetFilteredCategoriesAsync("Sub", statusFilter, searchTerm);
+            var subcategories = await _categoryService.GetFilteredSubcategoriesAsync(statusFilter, searchTerm);
 
             ViewData["CurrentStatus"] = statusFilter;
             ViewData["SearchTerm"] = searchTerm;
 
-            return View(categories);
+            return View(subcategories);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Create()

@@ -5,79 +5,343 @@
     ViewData["Title"] = "Add New Subcategory";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Add New Subcategory</h2>
-        <a asp-action="Index" class="btn btn-secondary">Back to Subcategories List</a>
-    </div>
+<style>
+    :root {
+        --bg-main: #f3f4f6;
+        --bg-card: rgba(255, 255, 255, 0.9);
+        --border-soft: rgba(209, 213, 219, 0.9);
+        --accent: #0ea5e9;
+        --accent-soft: rgba(14, 165, 233, 0.2);
+        --text-main: #111827;
+        --text-muted: #6b7280;
+    }
 
-    <div class="card p-4 shadow-sm">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    body {
+        background: radial-gradient(circle at top, #e5f2ff 0, #f9fafb 40%, #eef2ff 100%);
+        color: var(--text-main);
+    }
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="ParentCategoryId" class="form-label">Parent Category <span class="text-danger">*</span></label>
-                        <select asp-for="ParentCategoryId" class="form-select" asp-items="ViewBag.ParentCategories" required id="parentCategorySelect">
-                            <option value="">-- Select Parent Category --</option>
-                        </select>
-                        <span asp-validation-for="ParentCategoryId" class="text-danger"></span>
-                        <small class="form-text text-muted">Select the main category this subcategory belongs to.</small>
+    .category-layout {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+    }
+
+    .glass-card {
+        background: var(--bg-card);
+        border-radius: 1.5rem;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 18px 40px rgba(148, 163, 184, 0.35), 0 0 0 1px rgba(209, 213, 219, 0.65);
+        backdrop-filter: blur(14px);
+    }
+
+    .card-gradient-border {
+        position: relative;
+    }
+
+        .card-gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.65), rgba(129, 140, 248, 0.55));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+    .page-header-title {
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        color: #111827;
+    }
+
+    .badge-subtitle {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+        border-radius: 999px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .chip {
+        border-radius: 999px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+    }
+
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #111827;
+        margin-bottom: 0.25rem;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: rgba(249, 250, 251, 0.9);
+        border-radius: 0.75rem;
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        color: #111827;
+        font-size: 0.9rem;
+    }
+
+        .form-control::placeholder {
+            color: rgba(156, 163, 175, 0.9);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft), 0 0 0 4px rgba(14, 165, 233, 0.18);
+            color: #111827;
+        }
+
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    .alert-info {
+        background: #eff6ff;
+        border-color: rgba(59, 130, 246, 0.4);
+        color: #1d4ed8;
+        border-radius: 0.9rem;
+        font-size: 0.8rem;
+    }
+
+    .upload-box {
+        border-radius: 1rem;
+        border: 1px dashed rgba(156, 163, 175, 0.9);
+        background: radial-gradient(circle at top left, rgba(191, 219, 254, 0.5), #f9fafb);
+    }
+
+        .upload-box:hover {
+            border-color: var(--accent);
+            background: radial-gradient(circle at top left, rgba(191, 219, 254, 0.8), #ffffff);
+        }
+
+    .preview-frame {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(209, 213, 219, 0.9);
+        background: #f3f4f6;
+    }
+
+    .btn-primary {
+        border-radius: 999px;
+        padding-inline: 1.75rem;
+        padding-block: 0.55rem;
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        border: none;
+        box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35), 0 0 0 1px rgba(148, 163, 184, 0.9);
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #ffffff;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0284c7, #4f46e5);
+            box-shadow: 0 14px 28px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(148, 163, 184, 1);
+        }
+
+    .btn-outline-secondary {
+        border-radius: 999px;
+        font-size: 0.85rem;
+        border-color: rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+        background-color: #ffffff;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+    .btn-light {
+        border-radius: 999px;
+        font-size: 0.85rem;
+        background-color: #f9fafb;
+        border-color: rgba(209, 213, 219, 0.9);
+        color: var(--text-muted);
+    }
+
+        .btn-light:hover {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+    .card-footer {
+        border-top-color: rgba(209, 213, 219, 0.9);
+    }
+
+    .alert-danger {
+        border-radius: 0.9rem;
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #b91c1c;
+        font-size: 0.85rem;
+    }
+
+    @@media (max-width: 768px) {
+        .category-layout {
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<main class="container category-layout py-4">
+    <div class="row justify-content-center w-100">
+        <div class="col-xl-8 col-lg-9">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <div class="badge-subtitle mb-2">
+                        <i class="bi bi-diagram-3 me-1"></i>
+                        Subcategory Management
+                    </div>
+                    <h2 class="mb-1 page-header-title">Create Subcategory</h2>
+                    <p class="mb-0 text-muted">
+                        Link a new subcategory to an existing main category for better organization.
+                    </p>
+                </div>
+                <div class="d-none d-md-flex flex-column align-items-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left-short me-1"></i>
+                        Back to list
+                    </a>
+                    <div class="chip">
+                        <i class="bi bi-node-plus me-1 text-primary"></i>
+                        Inherits type from parent
+                    </div>
+                </div>
+            </div>
+
+            <section class="card-gradient-border glass-card p-1">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body pb-3">
+                        <form asp-action="Create" method="post" enctype="multipart/form-data" id="subcategoryForm">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
+
+                            <div class="row g-4">
+                                <div class="col-md-7">
+                                    <div class="mb-3">
+                                        <label asp-for="ParentCategoryId" class="form-label">
+                                            Parent Category <span class="text-danger">*</span>
+                                        </label>
+                                        <select asp-for="ParentCategoryId"
+                                                class="form-select"
+                                                asp-items="ViewBag.ParentCategories"
+                                                required
+                                                id="parentCategorySelect">
+                                            <option value="">-- Select Parent Category --</option>
+                                        </select>
+                                        <span asp-validation-for="ParentCategoryId" class="text-danger small"></span>
+                                        <small class="form-text text-muted">
+                                            Select the main category this subcategory belongs to.
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Category Type</label>
+                                        <div class="form-control bg-white" id="categoryTypeDisplay" style="color: #6b7280;">
+                                            Select a parent category to see the type
+                                        </div>
+                                        <input type="hidden" asp-for="Type" id="categoryTypeHidden" />
+                                        <small class="form-text text-muted">
+                                            The subcategory will inherit the type from its parent category.
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Name" class="form-label"></label>
+                                        <input asp-for="Name" class="form-control" placeholder="Enter subcategory name" />
+                                        <span asp-validation-for="Name" class="text-danger small"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Description" class="form-label"></label>
+                                        <textarea asp-for="Description"
+                                                  class="form-control"
+                                                  rows="4"
+                                                  placeholder="Describe what belongs in this subcategory"></textarea>
+                                        <span asp-validation-for="Description" class="text-danger small"></span>
+                                    </div>
+
+                                    <input type="hidden" asp-for="Slug" />
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                                        <label class="form-label" for="ImageFile">Subcategory Image</label>
+                                        <span class="text-muted small">Required</span>
+                                    </div>
+
+                                    <div class="upload-box p-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
+                                                 style="width:32px;height:32px;background:#ffffff;border:1px solid rgba(209,213,219,0.9);">
+                                                <i class="bi bi-image text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="small text-muted">Drag & drop or click to upload</div>
+                                                <div class="small" style="font-size:0.75rem;">Max size: 5MB, JPG/PNG.</div>
+                                            </div>
+                                        </div>
+
+                                        <input type="file"
+                                               name="ImageFile"
+                                               id="ImageFile"
+                                               class="form-control form-control-sm bg-transparent border-0 px-0"
+                                               accept="image/*"
+                                               required />
+                                        <span asp-validation-for="ImageUrl" class="text-danger small d-block mt-1"></span>
+
+                                        <div class="mt-3 preview-frame" id="previewContainer" style="display:none;">
+                                            <img id="imagePreview"
+                                                 src="#"
+                                                 alt="Subcategory Image Preview"
+                                                 class="w-100"
+                                                 style="max-height:220px;object-fit:cover;" />
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-info mt-3">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        This will be created as a <strong>Subcategory</strong> under the selected parent category.
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Category Type</label>
-                        <div class="form-control bg-light" id="categoryTypeDisplay" style="color: #6c757d;">
-                            Select a parent category to see the type
+                    <div class="card-footer bg-transparent d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 pt-3">
+                        <div class="d-flex align-items-center text-muted small">
+                            <i class="bi bi-shield-check text-success me-2"></i>
+                            Parent type is auto-fetched and validated.
                         </div>
-                        <input type="hidden" asp-for="Type" id="categoryTypeHidden" />
-                        <small class="form-text text-muted">The subcategory will inherit the type from its parent category.</small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label"></label>
-                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-
-                    <input type="hidden" asp-for="Slug" />
-                </div>
-
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label" for="ImageFile">Subcategory Image</label>
-                        <input type="file" name="ImageFile" id="ImageFile" class="form-control" accept="image/*" required />
-                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                        <small class="form-text text-muted">Upload an image for this subcategory. Max file size: 5MB.</small>
-
-                        <img id="imagePreview"
-                             src="#"
-                             alt="Logo Preview"
-                             class="mt-3 rounded w-100"
-                             style="max-height: 200px; display: none;" />
-                    </div>
-
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        This will be created as a <strong>Subcategory</strong> under the selected parent category.
+                        <div class="d-flex gap-2">
+                            <a asp-action="Index" class="btn btn-light btn-sm">
+                                Cancel
+                            </a>
+                            <button type="submit" form="subcategoryForm" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i>
+                                Add Subcategory
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="mt-4 border-top pt-3">
-                <button type="submit" class="btn btn-primary me-2">Add Subcategory</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+</main>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
@@ -91,7 +355,6 @@
         const categoryTypeDisplay = document.getElementById('categoryTypeDisplay');
         const categoryTypeHidden = document.getElementById('categoryTypeHidden');
 
-        // Category type mapping
         const categoryTypes = {
             0: 'Men',
             1: 'Women',
@@ -99,51 +362,42 @@
             3: 'Sports'
         };
 
-        // Handle parent category selection change
-        parentCategorySelect.addEventListener('change', async function() {
+        parentCategorySelect.addEventListener('change', async function () {
             const selectedParentId = this.value;
 
             if (selectedParentId) {
                 try {
-                    console.log('Selected parent ID:', selectedParentId); // Debug
-
-                    // Use the new endpoint to get parent category type
                     const response = await fetch(`/Subcategories/GetParentCategoryType?parentCategoryId=${selectedParentId}`);
-
-                    console.log('Response status:', response.status); // Debug
 
                     if (response.ok) {
                         const data = await response.json();
-                        console.log('Received data:', data); // Debug
 
-                        // Try both uppercase and lowercase 'type' property (ASP.NET Core might convert to camelCase)
                         const typeValue = data.Type ?? data.type;
-                        console.log('Type value:', typeValue); // Debug
-
                         const typeText = categoryTypes[typeValue] || 'Unknown';
-                        console.log('Mapped type text:', typeText); // Debug
 
                         categoryTypeDisplay.textContent = typeText;
-                        categoryTypeDisplay.style.color = '#212529';
+                        categoryTypeDisplay.style.color = '#111827';
                         categoryTypeHidden.value = typeValue;
                     } else {
-                        const errorData = await response.json();
-                        console.error('Error response:', errorData); // Debug
+                        try {
+                            const errorData = await response.json();
+                            console.error('Error response:', errorData);
+                        } catch { }
                         throw new Error('Failed to fetch parent category type');
                     }
                 } catch (error) {
                     console.error('Error fetching category type:', error);
                     categoryTypeDisplay.textContent = 'Error loading type';
                     categoryTypeDisplay.style.color = '#dc3545';
+                    categoryTypeHidden.value = '';
                 }
             } else {
                 categoryTypeDisplay.textContent = 'Select a parent category to see the type';
-                categoryTypeDisplay.style.color = '#6c757d';
+                categoryTypeDisplay.style.color = '#6b7280';
                 categoryTypeHidden.value = '';
             }
         });
 
-        // Slug generation
         if (nameInput && slugInput) {
             if (nameInput.value.trim() !== '') {
                 slugInput.value = generateSlug(nameInput.value);
@@ -168,23 +422,25 @@
             }
         }
 
-        // Image preview
         const imageInput = document.getElementById('ImageFile');
         const imagePreview = document.getElementById('imagePreview');
+        const previewContainer = document.getElementById('previewContainer');
 
-        imageInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
+        if (imageInput && imagePreview && previewContainer) {
+            imageInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = '#';
+                    previewContainer.style.display = 'none';
                 }
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.src = '#';
-                imagePreview.style.display = 'none';
-            }
-        });
+            });
+        }
     });
 </script>
